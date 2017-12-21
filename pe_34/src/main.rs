@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 fn factorial(n: i64) -> i64 {
     if n <= 0 {
         return 1;
@@ -10,20 +12,39 @@ fn factorial(n: i64) -> i64 {
     return res;
 }
 
-fn recursive_checker(acc: i64, fact_sum_acc: i64, depth: i64) {
-    if depth > 0 {
-        for d in 0..10 {
-            let new_acc = 10*acc + d;
-            let new_fact_sum_acc = fact_sum_acc + factorial(d);
-            if new_acc == new_fact_sum_acc {
-                println!("{}", new_acc);
+fn main() {
+    let mut f_map = HashMap::new();
+    for i in 0..10 {
+        f_map.insert(i, factorial(i));
+    }
+
+    let mut res = 0;
+    
+    for d in 3..9999999 {
+        let mut factorial_sum: i64 = 0;
+        for digit_b in d.to_string().bytes() {
+            let digit: i64 = digit_b as i64 - 48;
+            factorial_sum += f_map.get(&digit).unwrap();
+        }
+
+        if d == factorial_sum {
+            print!("{}", d);
+            let mut first = true;
+            for digit_b in d.to_string().bytes() {
+                let digit = digit_b - 48;
+                if first {
+                    first = false;
+                    print!(" = ");
+                } else {
+                    print!(" + ");
+                }
+                print!("{}!", digit);
             }
-            recursive_checker(new_acc, new_fact_sum_acc, depth - 1)
+            println!("");
+
+            res += d;
         }
     }
-}
 
-fn main() {
-    
-    recursive_checker(0, 0, 10);
+    println!("{:?}", res);
 }
