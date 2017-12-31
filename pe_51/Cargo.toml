@@ -1,0 +1,9 @@
+[package]
+name = "pe_51"
+version = "0.1.0"
+authors = ["Torkel <torkel@voysys.se>"]
+
+[profile.release]
+debug = true
+
+[dependencies]
