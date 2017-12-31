@@ -7,3 +7,4 @@ authors = ["Torkel <torkel@voysys.se>"]
 debug = true
 
 [dependencies]
+bit-vec = "0.4.4"
