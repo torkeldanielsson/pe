@@ -1,6 +1,8 @@
 extern crate bit_vec;
 use bit_vec::BitVec;
 use std::collections::HashSet;
+use std::io::Write;
+use std::io::stdout;
 
 fn split_digits(n: i64) -> Vec<u8> {
     fn x_inner(n: i64, xs: &mut Vec<u8>) {
@@ -25,7 +27,7 @@ fn join_digits(d: Vec<u8>) -> i64 {
 
 fn main() {
 
-    for max_o in 1..5 {
+    for max_o in 9..999 {
         let mut max: usize = 10;
         for _i in 0..max_o {
             max *= 10;
@@ -68,7 +70,7 @@ fn main() {
             p += 1;
         }
 
-        let precomp_primes_range: usize = 100000000;
+        let precomp_primes_range: usize = 1000000000;
         let mut precomp_primes_start: usize = 0;
         let mut precomp_primes_end: usize = 0;
         let mut precomp_primes = HashSet::new();
@@ -82,6 +84,12 @@ fn main() {
                 precomp_primes_start = p;
                 precomp_primes_end = p + precomp_primes_range;
 
+                let tick_size = 10000000;
+                let mut prev_tick = precomp_primes_start + tick_size;
+
+                print!("precomping ({}) {} - {} (tick size: {}) ", max_o, precomp_primes_start, precomp_primes_end, tick_size);
+                stdout().flush().expect("");
+
                 if precomp_primes_end > max {
                     precomp_primes_end = max;
                 }
@@ -89,8 +97,11 @@ fn main() {
                 precomp_primes = HashSet::new();
                 
                 'precomp: for pi in precomp_primes_start..(precomp_primes_end + 1) {
+                    if pi % 2 == 0 || pi % 3 == 0 || pi % 5 == 0 {
+                        continue 'precomp;
+                    }
                     'pcf: for pri in &div_primes {
-                        if pri >= &pi {
+                        if pri > &((pi as f64).sqrt() as usize + 1) {
                             break 'pcf;
                         }
                         if pi % pri == 0 {
@@ -98,8 +109,14 @@ fn main() {
                         }
                     }
                     precomp_primes.insert(pi);
+
+                    if pi > prev_tick {
+                        print!(".");
+                        stdout().flush().expect("");
+                        prev_tick += tick_size;
+                    }
                 }
-                println!("precomped {} - {}", precomp_primes_start, precomp_primes_end);
+                println!(" done");
             }
 
             if !precomp_primes.contains(&p) {
