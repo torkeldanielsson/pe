@@ -25,9 +25,33 @@ fn join_digits(d: Vec<u8>) -> i64 {
     return res
 }
 
+fn is_prime(n: i64) -> bool {
+
+    if n == 2 {
+        return true;
+    }
+
+    if n % 2 == 0 || n <= 1 {
+        return false;
+    }
+
+    let mut i: i64 = 3;
+
+    while i <= (n as f64).sqrt() as i64 {
+
+        if n % i == 0 {
+            return false;
+        }
+
+        i += 2;
+    }
+
+    return true;
+}
+
 fn main() {
 
-    for max_o in 9..999 {
+    for max_o in 5..6 {
         let mut max: usize = 10;
         for _i in 0..max_o {
             max *= 10;
@@ -129,51 +153,57 @@ fn main() {
 
                 for i1 in 0..(digits.len() - 1) {
                     for i2 in (i1 + 1)..(digits.len() - 0) {
-                        if digits[i1] == digits[i2] {
-                            let mut count = 0;
-                            let mut start_i = 0;
-                            if i1 == 0 {
-                                start_i = 1;
-                            }
-                            'inner: for i in start_i..10 {
-                                let mut test_d = digits.clone();
-                                test_d[i1] = i;
-                                test_d[i2] = i;
-                                let test_dig = join_digits(test_d) as usize;
-                                if test_dig < precomp_primes_start || test_dig > precomp_primes_end {
-                                    for pri in &div_primes {
-                                        if pri < &test_dig && test_dig % pri == 0 {
-                                            continue 'inner;
-                                        }
-                                    }
-                                    count += 1;
-                                } else {
-                                    if precomp_primes.contains(&test_dig) {
-                                        count += 1;
-                                    }
+                        for i3 in (i2 + 1)..(digits.len()) {
+                            if digits[i1] == digits[i2] && digits[i3] == digits[i2] {
+
+                                let mut count = 0;
+                                let mut start_i = 0;
+                                if i1 == 0 {
+                                    start_i = 1;
                                 }
-                            }
-                            if count >= 7 {
-                                if !printed_results.contains(&p) {
-                                    print!("{:?}:", count);
-                                    'inner2: for i in start_i..10 {
-                                        let mut test_d = digits.clone();
-                                        test_d[i1] = i;
-                                        test_d[i2] = i;
-                                        let test_dig = join_digits(test_d) as usize;
+                                'inner: for i in start_i..10 {
+                                    let mut test_d = digits.clone();
+                                    test_d[i1] = i;
+                                    test_d[i2] = i;
+                                    test_d[i3] = i;
+                                    let test_dig = join_digits(test_d) as usize;
+                                    if test_dig < precomp_primes_start || test_dig > precomp_primes_end {
+                                        println!("OUTSIDE");
                                         for pri in &div_primes {
                                             if pri < &test_dig && test_dig % pri == 0 {
-                                                continue 'inner2;
+                                                continue 'inner;
                                             }
                                         }
-                                        printed_results.insert(test_dig);
-                                        print!(" {:?}", test_dig);
+                                        count += 1;
+                                    } else {
+                                        if precomp_primes.contains(&test_dig) {
+                                            count += 1;
+                                        }
                                     }
-                                    println!("");
                                 }
-                            }
-                            if count >= 8 {
-                                return
+                                if count >= 7 {
+                                    if !printed_results.contains(&p) {
+                                        print!("{:?}:", count);
+                                        'inner2: for i in start_i..10 {
+                                            let mut test_d = digits.clone();
+                                            test_d[i1] = i;
+                                            test_d[i2] = i;
+                                            test_d[i3] = i;
+                                            let test_dig = join_digits(test_d) as usize;
+                                            for pri in &div_primes {
+                                                if pri < &test_dig && test_dig % pri == 0 {
+                                                    continue 'inner2;
+                                                }
+                                            }
+                                            printed_results.insert(test_dig);
+                                            print!(" {:?}", test_dig);
+                                        }
+                                        println!("");
+                                    }
+                                }
+                                if count >= 8 {
+                                    return
+                                }
                             }
                         }
                     }
