@@ -3,13 +3,38 @@ use std::io::BufReader;
 use std::io::BufRead;
 use std::str;
 use std::collections::{HashSet, HashMap};
+use std::cmp::Ordering;
 
 #[derive(Debug)]
+#[derive(Eq)]
 struct Card {
     val: i32,
     suit: i32,
 }
 
+impl Ord for Card {
+    fn cmp(&self, other: &Card) -> Ordering {
+        if self.val == other.val {
+            return self.suit.cmp(&other.suit);
+        }
+        self.val.cmp(&other.val)
+    }
+}
+
+impl PartialOrd for Card {
+    fn partial_cmp(&self, other: &Card) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl PartialEq for Card {
+    fn eq(&self, other: &Card) -> bool {
+        if self.val == other.val {
+            return self.suit == other.suit;
+        }
+        self.val == other.val
+    }
+}
 #[derive(Debug)]
 struct Hand {
     cards: Vec<Card>,
@@ -21,8 +46,14 @@ struct Game {
     h_b: Hand,
 }
 
+fn get_score(h: Hand) -> i32 {
+    
+    5
+}
+ 
 fn main() {
-    let input = File::open("p054_poker.txt").unwrap();
+    // let input = File::open("p054_poker.txt").unwrap();
+    let input = File::open("test.txt").unwrap();
     let reader = BufReader::new(&input);
 
     let mut games: Vec<Game> = Vec::new();
@@ -83,7 +114,7 @@ fn main() {
                 return;
             }
 
-            print!("v:{} s:{}, ", val, suit);
+            // print!("v:{} s:{}, ", val, suit);
 
             if count < 5 {
                 game.h_a.cards.push(card_obj);
@@ -93,6 +124,15 @@ fn main() {
 
             count += 1;
         }
-        println!("\n{:?}", game);
+        game.h_a.cards.sort();
+        game.h_b.cards.sort();
+        games.push(game);
+    }
+
+    for game in games {
+        println!("{:?}", game);
+
+        let score_a = get_score(game.h_a);
+        let score_b = get_score(game.h_b);
     }
 }
